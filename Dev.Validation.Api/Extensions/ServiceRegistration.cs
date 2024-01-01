@@ -10,6 +10,7 @@ public static class ServiceRegistration
     public static void ConfigureServices(this IServiceCollection services)
     {
         services.AddKeyedSingleton<IProductService, ProductService>("productService");
+        
         services.AddControllers(opt => opt.Filters.Add<ValidationFilter>())
     .AddFluentValidation(conf => conf.RegisterValidatorsFromAssemblyContaining<ProductValidator>())
     .ConfigureApiBehaviorOptions(opt => opt.SuppressModelStateInvalidFilter = true);

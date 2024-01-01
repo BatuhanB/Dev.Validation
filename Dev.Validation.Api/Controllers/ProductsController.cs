@@ -32,7 +32,7 @@ namespace Dev.Validation.Api.Controllers
         }
 
         [HttpGet("{productId}")]
-        public async Task<IActionResult> GetByUd([FromKeyedServices("productService")] IProductService service, [FromRoute] string productId)
+        public async Task<IActionResult> GetById([FromKeyedServices("productService")] IProductService service, [FromRoute] string productId)
         {
             var result = await service.GetById(productId);
             if (result != null)

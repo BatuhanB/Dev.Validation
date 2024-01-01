@@ -1,12 +1,19 @@
 using Dev.Validation.Api.Extensions.Handler;
-using Dev.Validation.Api.Filters;
 using Dev.Validation.Extensions;
-using Dev.Validation.Validator;
-using FluentValidation.AspNetCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+var logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .WriteTo.Console()
+    .Enrich.FromLogContext()
+    .CreateLogger();
+
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(logger);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -24,7 +31,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseMiddleware<GlobalErrorHandling>();
+app.UseMiddleware(typeof(GlobalErrorHandling));
 
 app.UseHttpsRedirection();
 
