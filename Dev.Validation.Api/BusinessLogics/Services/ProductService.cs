@@ -1,18 +1,19 @@
-﻿using Dev.Validation.BusinessLogics.Interfaces;
+﻿using Dev.Validation.Api.Exceptions;
+using Dev.Validation.BusinessLogics.Interfaces;
 using Dev.Validation.Models.Entities;
 
 namespace Dev.Validation.BusinessLogics.Services;
 
 public class ProductService : IProductService
 {
-    public List<Product> Products {  get; private set; } = [];
+    public List<Product> Products { get; private set; } = [];
     public ProductService()
     {
-        Products.Add(new Product(Guid.NewGuid().ToString(),"Product 1",12,12));
-        Products.Add(new Product(Guid.NewGuid().ToString(),"Product 2",23,22));
-        Products.Add(new Product(Guid.NewGuid().ToString(),"Product 3",54,32));
-        Products.Add(new Product(Guid.NewGuid().ToString(),"Product 4",43,42));
-        Products.Add(new Product(Guid.NewGuid().ToString(),"Product 5",12,15));
+        Products.Add(new Product(Guid.NewGuid().ToString(), "Product 1", 12, 12));
+        Products.Add(new Product(Guid.NewGuid().ToString(), "Product 2", 23, 22));
+        Products.Add(new Product(Guid.NewGuid().ToString(), "Product 3", 54, 32));
+        Products.Add(new Product(Guid.NewGuid().ToString(), "Product 4", 43, 42));
+        Products.Add(new Product(Guid.NewGuid().ToString(), "Product 5", 12, 15));
     }
 
     public Task<bool> Delete(string productId)
@@ -27,22 +28,24 @@ public class ProductService : IProductService
 
     public async Task<Product> GetById(string productId)
     {
-        var product = Products.Find(x=>x.Id == productId);
-        if(product == null) return new Product("","",0,0);
+        var product = Products.Find(x => x.Id == productId);
+        
+        if (product == null) throw new ProductNotFoundException($"{productId} has not found!");
+
         return await Task.FromResult(product);
     }
 
     public Task<bool> Update(Product product)
     {
-        if(product.Id == null) return Task.FromResult(false);
+        if (product.Id == null) return Task.FromResult(false);
         var productDb = GetById(product.Id).Result;
 
-        if (productDb == null) return Task.FromResult(false); 
+        if (productDb == null) return Task.FromResult(false);
         productDb.Name = product.Name;
         productDb.Stock = product.Stock;
         productDb.Price = product.Price;
         productDb.IsActive = product.IsActive;
-        productDb.UpdateDate= DateTime.Now;
+        productDb.UpdateDate = DateTime.Now;
 
         return Task.FromResult(true);
     }
